@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { ThemeProvider } from "styled-components";
 import ChatBot from "react-simple-chatbot";
 
 const CheersComponent = (props) => {
@@ -18,10 +19,10 @@ const CheersComponent = (props) => {
 
   return (
     <span>
-      Hola {value}, ¡mucho gusto en conocerte!, te voy a realizar una serie de
-      preguntas de 3 cuestionarios validados clínicamente para evaluar elementos
-      de tu salud emocional, y darte recomendaciones personalizadas. No
-      compartiremos con nadie tus resultados individuales.
+      Hola {value}, ¡mucho gusto en conocerte!, te voy a realizar preguntas de 3
+      cuestionarios validados clínicamente, útiles para evaluar elementos de tu
+      salud emocional y darte recomendaciones personalizadas. No compartiremos
+      con nadie tus resultados individuales.
       <a
         style={linkStyle}
         href="https://es.prosperia.health/terms"
@@ -62,16 +63,15 @@ const App = () => {
     // No es GAD2_1s si no GAD2_1a
     const { GAD2_1a } = steps;
     const GAD2 = GAD2_1a.value + value;
-    updateResult("GAD2", GAD2);
-    if (GAD2 >= 3) return "M1";
-    return "M2";
+    //updateResult("GAD2", GAD2);
+    if (GAD2 >= 3) return "M2";
+    return "M1";
   };
 
   const calcGAD7int1 = (steps, value) => {
     const { GAD2_1a, GAD2_2a, GAD7_3a, GAD7_4a } = steps;
     const GAD7 =
       GAD2_1a.value + GAD2_2a.value + GAD7_3a.value + GAD7_4a.value + value;
-    updateResult("GAD7", GAD7);
     if (GAD7 >= 15) return "M3";
     return "GAD7_6q";
   };
@@ -85,7 +85,6 @@ const App = () => {
       GAD7_4a.value +
       GAD7_5a.value +
       value;
-    updateResult("GAD7", GAD7);
     if (GAD7 >= 15) return "M3";
     return "GAD7_7q";
   };
@@ -305,7 +304,7 @@ const App = () => {
         {
           value: 0,
           label: "No, pasemos a la siguiente sección.",
-          trigger: "PHQ2_1q",
+          trigger: "M2_b",
         },
         {
           value: 1,
@@ -313,6 +312,11 @@ const App = () => {
           trigger: "GAD7_3q",
         },
       ],
+    },
+    {
+      id: "M2_b",
+      message: "De acuerdo, iniciando el segundo cuestionario...",
+      trigger: "PHQ2_1q",
     },
     // Cuestionario GAD7
     {
@@ -419,7 +423,7 @@ const App = () => {
       component: (
         <TextComponent
           text={
-            ", presentas síntomas de ansiedad moderada/severa que puede ser tratada con psicoterapia. El tipo de terapia más recomendada para esta afección es la terapia cognitiva conductual."
+            " Presentas síntomas de ansiedad moderada/severa que puede ser tratada con psicoterapia. El tipo de terapia más recomendada para esta afección es la terapia cognitiva conductual."
           }
           trigger={"M5"}
         />
@@ -431,7 +435,7 @@ const App = () => {
       component: (
         <TextComponent
           text={
-            ", presentas síntomas de ansiedad leve que pueden disminuir con autocuidados como ejercicio y meditación. Si sientes que los síntomas incrementa, considera la psicoterapia."
+            " Presentas síntomas de ansiedad leve que pueden disminuir con autocuidados como ejercicio y meditación. Si sientes que los síntomas incrementa, considera la psicoterapia."
           }
           trigger={"M5"}
         />
@@ -443,8 +447,8 @@ const App = () => {
       options: [
         {
           value: 0,
-          label: "¡Entendido! Iniciemos la siguiente sección",
-          trigger: "PHQ2_1q",
+          label: "¡Entendido! Iniciemos el segundo cuestionario",
+          trigger: "M2_b",
         },
       ],
     },
@@ -453,7 +457,7 @@ const App = () => {
       id: "PHQ2_1q",
       message:
         "Durante las últimas 2 semanas, ¿qué tan seguido has sentido poco interés o placer en hacer cosas?",
-      trigger: "GAD2_1a",
+      trigger: "PHQ2_1a",
     },
     {
       id: "PHQ2_1a",
@@ -627,7 +631,7 @@ const App = () => {
       id: "PHQ9_9q",
       message:
         "¿Has tenido dificultad para concentrarte en ciertas actividades, tales como leer o ver la televisión?",
-      trigger: "PHQ9_7a",
+      trigger: "PHQ9_9a",
     },
     {
       id: "PHQ9_9a",
@@ -675,7 +679,6 @@ const App = () => {
       message:
         "Ya sólo nos falta una sección. Te sugiero darle un momento de descanso a tus ojos, parpadeando y enfocando un objeto lejano durante 20 segundos.",
       trigger: "M10b",
-      //end: true,
     },
     {
       id: "M10b",
@@ -688,22 +691,15 @@ const App = () => {
         {
           value: 1,
           label: "¡Listo! Pasemos a la última sección",
-          trigger: "MBIGS_1q",
+          trigger: "M10e",
         },
       ],
     },
-    //Falta MBIGS_1q
-    {
-      id: "MBIGS_1q",
-      message: "Falta MBIGS_1q",
-      end: true,
-    },
-    ///
     {
       id: "M10c",
       message:
         "Normalmente, los humanos parpadean unas 15 veces por minuto. Sin embargo, sólo parpadean entre 5 y 7 veces por minuto cuando usan la computadora u otra pantalla digital. ¡Esto afecta la salud de tus ojos!",
-      trigger: "M10b",
+      trigger: "M10d",
     },
     {
       id: "M10d",
@@ -1251,6 +1247,28 @@ const App = () => {
 
   const handleEnd = ({ renderedSteps, steps, values }) => {};
 
+  // theming
+  const theme = {
+    background: "#f5f8fb",
+    fontFamily: "Helvetica Neue",
+    headerBgColor: "#143540",
+    headerFontColor: "#fff",
+    headerFontSize: "15px",
+    botBubbleColor: "#32adc4",
+    botFontColor: "#fff",
+    userBubbleColor: "#c9f0ff",
+    userFontColor: "#143540",
+  };
+
+  const propsChatBot = {
+    width: "450px",
+    headerTitle: "ChatBot",
+    handleEnd: handleEnd,
+    steps: steps,
+    botAvatar:
+      "https://calcs-app.s3.amazonaws.com/resources/salaunoReference.png",
+  };
+
   return (
     <div
       style={{
@@ -1260,7 +1278,9 @@ const App = () => {
         height: "100vh",
       }}
     >
-      <ChatBot headerTitle="ChatBot" handleEnd={handleEnd} steps={steps} />
+      <ThemeProvider theme={theme}>
+        <ChatBot {...propsChatBot} />
+      </ThemeProvider>
     </div>
   );
 };
