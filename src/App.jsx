@@ -3,8 +3,8 @@ import { ThemeProvider } from "styled-components";
 import ChatBot from "react-simple-chatbot";
 
 const CheersComponent = (props) => {
-  const { previousStep } = props;
-  const { value } = previousStep;
+  const { steps } = props;
+  const { name } = steps;
 
   const linkStyle = {
     marginLeft: 5,
@@ -19,10 +19,10 @@ const CheersComponent = (props) => {
 
   return (
     <span>
-      Hola {value}, ¡mucho gusto en conocerte!, te voy a realizar preguntas de 3
-      cuestionarios validados clínicamente, útiles para evaluar elementos de tu
-      salud emocional y darte recomendaciones personalizadas. No compartiremos
-      con nadie tus resultados individuales.
+      Hola {name.value}, ¡mucho gusto en conocerte!, te voy a realizar preguntas
+      de 3 cuestionarios validados clínicamente (GAD-7, PHQ-9 y MBI-GS), útiles
+      para evaluar elementos de tu salud emocional y hacerte recomendaciones
+      personalizadas. No compartiremos con nadie tus resultados individuales.
       <a
         style={linkStyle}
         href="https://es.prosperia.health/terms"
@@ -52,6 +52,26 @@ const TextComponent = (props) => {
   );
 };
 
+const FinishComponent = ({ background, logo }) => {
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        borderRadius: 5,
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        background: background,
+      }}
+    >
+      <img src={logo} style={{ width: "300px", marginTop: 15 }} alt="" />
+      <h3 style={{ color: "#fff" }}>Muchas Gracias</h3>
+    </div>
+  );
+};
+
 const App = () => {
   let result = {};
 
@@ -63,7 +83,7 @@ const App = () => {
     // No es GAD2_1s si no GAD2_1a
     const { GAD2_1a } = steps;
     const GAD2 = GAD2_1a.value + value;
-    //updateResult("GAD2", GAD2);
+    updateResult("GAD2", GAD2);
     if (GAD2 >= 3) return "M2";
     return "M1";
   };
@@ -72,6 +92,7 @@ const App = () => {
     const { GAD2_1a, GAD2_2a, GAD7_3a, GAD7_4a } = steps;
     const GAD7 =
       GAD2_1a.value + GAD2_2a.value + GAD7_3a.value + GAD7_4a.value + value;
+    updateResult("GAD7", GAD7);
     if (GAD7 >= 15) return "M3";
     return "GAD7_6q";
   };
@@ -85,6 +106,7 @@ const App = () => {
       GAD7_4a.value +
       GAD7_5a.value +
       value;
+    updateResult("GAD7", GAD7);
     if (GAD7 >= 15) return "M3";
     return "GAD7_7q";
   };
@@ -110,6 +132,7 @@ const App = () => {
   const calcPHQ2 = (steps, value) => {
     const { PHQ2_1a } = steps;
     const PHQ2 = PHQ2_1a.value + value;
+    updateResult("PHQ2", PHQ2);
     if (PHQ2 >= 3) return "M7";
     return "M6";
   };
@@ -124,6 +147,7 @@ const App = () => {
       PHQ9_5a.value +
       PHQ9_6a.value +
       value;
+    updateResult("PHQ9", PHQ9);
     if (PHQ9 >= 20) return "M8";
     return "Phq9_8q";
   };
@@ -147,6 +171,7 @@ const App = () => {
       PHQ9_6a.value +
       PHQ9_7a.value +
       value;
+    updateResult("PHQ9", PHQ9);
     if (PHQ9 >= 20) return "M8";
     return "Phq9_9q";
   };
@@ -170,9 +195,9 @@ const App = () => {
       PHQ9_5a.value +
       PHQ9_6a.value +
       PHQ9_7a.value +
-      PHQ9_8a +
+      PHQ9_8a.value +
       value;
-    /// Elias --> PH9 not GAD7
+    updateResult("PHQ9", PHQ9);
     if (PHQ9 >= 15) return "M8";
     if (PHQ9 <= 14 && PHQ9 >= 5) return "M9";
     return "M6";
@@ -183,21 +208,20 @@ const App = () => {
   const calcMBIGS_A = (steps, value) => {
     const { MBIGS_A1a, MBIGS_A2a, MBIGS_A3a, MBIGS_A4a } = steps;
     const MBIGS_A =
-      (MBIGS_A1a.value +
-        MBIGS_A2a.value +
-        MBIGS_A3a.value +
-        MBIGS_A4a -
-        value +
-        value) /
-      5;
+      MBIGS_A1a.value +
+      MBIGS_A2a.value +
+      MBIGS_A3a.value +
+      MBIGS_A4a.value +
+      value;
+    updateResult("MBIGS_A", MBIGS_A);
     if (MBIGS_A >= 15) return "M11";
     return "MBIGS_E2q";
   };
 
   const calcMBIGS_C = (steps, value) => {
     const { MBIGS_C1a, MBIGS_C2a, MBIGS_C3a } = steps;
-    const MBIGS_C =
-      (MBIGS_C1a.value + MBIGS_C2a.value + MBIGS_C3a.value + value) / 4;
+    const MBIGS_C = MBIGS_C1a.value + MBIGS_C2a.value + MBIGS_C3a.value + value;
+    updateResult("MBIGS_C", MBIGS_C);
     if (MBIGS_C >= 10) return "M12";
     return "MBIGS_E6q";
   };
@@ -205,25 +229,52 @@ const App = () => {
   const calcMBIGS_E = (steps, value) => {
     const { MBIGS_E1a, MBIGS_E2a, MBIGS_E3a, MBIGS_E4a, MBIGS_E5a } = steps;
     const MBIGS_E =
-      (MBIGS_E1a.value +
-        MBIGS_E2a.value +
-        MBIGS_E3a.value +
-        MBIGS_E4a.value +
-        MBIGS_E5a.value +
-        value) /
-      6;
+      MBIGS_E1a.value +
+      MBIGS_E2a.value +
+      MBIGS_E3a.value +
+      MBIGS_E4a.value +
+      MBIGS_E5a.value +
+      value;
+    updateResult("MBIGS_E", MBIGS_E);
     if (MBIGS_E <= 22) return "M13";
     return "M14";
   };
 
   const steps = [
     {
-      id: "1",
-      message: "Cual es tu nombre?",
+      id: "name_q",
+      message: "¿Cual es tu nombre?",
       trigger: "name",
     },
     {
       id: "name",
+      user: true,
+      validator: (value) => {
+        const pattern = /^[A-Za-z]+$/;
+        if (!pattern.test(value)) {
+          return "Solo se permiten letras";
+        }
+        return true;
+      },
+      trigger: "business_q",
+    },
+    {
+      id: "business_q",
+      message: "¿Cuál es el nombre de la empresa en la que trabajas?",
+      trigger: "business",
+    },
+    {
+      id: "business",
+      user: true,
+      trigger: "department_q",
+    },
+    {
+      id: "department_q",
+      message: "¿A cuál área de la empresa perteneces?",
+      trigger: "department",
+    },
+    {
+      id: "department",
       user: true,
       trigger: "saludo",
     },
@@ -315,7 +366,7 @@ const App = () => {
     },
     {
       id: "M2_b",
-      message: "De acuerdo, iniciando el segundo cuestionario...",
+      message: "Iniciando el segundo cuestionario...",
       trigger: "PHQ2_1q",
     },
     // Cuestionario GAD7
@@ -715,13 +766,28 @@ const App = () => {
     {
       id: "M10e",
       message:
-        "Las siguientes preguntas están enfocadas en la evaluación de tu contexto laboral. Su análisis me permitirá dar recomendaciones a un alto nivel para mejorar las condciones de trabajo.",
+        "Las siguientes preguntas están enfocadas en tu contexto laboral. Su análisis me permitirá dar recomendaciones a un alto nivel para mejorar las condiciones de trabajo.",
+      trigger: "M10f",
+    },
+    {
+      id: "M10f",
+      options: [
+        {
+          value: 0,
+          label: "Continuemos",
+          trigger: "MBIGS_A",
+        },
+      ],
+    },
+    {
+      id: "MBIGS_A",
+      message:
+        "A lo largo del último año en tu trabajo, ¿con qué frecuencia te has sentido identificado(a) con las siguientes afirmaciones?",
       trigger: "MBIGS_A1q",
     },
     {
       id: "MBIGS_A1q",
-      message:
-        "A lo largo del último año en su trabajo, ¿con qué frecuencia te has sentido identificado(a) con alguna de las siguientes afirmaciones? “Estoy emocionalmente agotado por mi trabajo”",
+      message: "“Estoy emocionalmente agotado por mi trabajo”",
       trigger: "MBIGS_A1a",
     },
     {
@@ -914,7 +980,7 @@ const App = () => {
     {
       id: "MBIGS_E2q",
       message:
-        "A lo largo del último año en su trabajo, ¿con qué frecuencia se ha sentido identificado con las siguientes afirmaciones? “Contribuyo efectivamente a lo que hace mi organización”",
+        "A lo largo del último año en tu trabajo, ¿con qué frecuencia se ha sentido identificado con las siguientes afirmaciones? “Contribuyo efectivamente a lo que hace mi organización”",
       trigger: "MBIGS_E2a",
     },
     {
@@ -1031,8 +1097,7 @@ const App = () => {
     },
     {
       id: "MBIGS_E4q",
-      message:
-        "A lo largo del último año en su trabajo, ¿con qué frecuencia se ha sentido identificado con alguna de las siguientes afirmaciones? “Estoy emocionalmente agotado por mi trabajo",
+      message: "“Me estimula conseguir objetivos en mi trabajo”",
       trigger: "MBIGS_E4a",
     },
     {
@@ -1165,7 +1230,7 @@ const App = () => {
     {
       id: "MBIGS_E6q",
       message:
-        "Por último, A lo largo del último año en su trabajo, ¿con qué frecuencia se ha sentido identificado con la siguiente afirmación?: “En mi trabajo, tengo la seguridad de que soy eficaz en la finalización de las cosas”",
+        "Por último, a lo largo del último año en tu trabajo, ¿con qué frecuencia te has identificado con  la afirmación “En mi trabajo, tengo la seguridad de que soy eficaz en la finalización de las cosas”?",
       trigger: "MBIGS_E6a",
     },
     {
@@ -1211,7 +1276,7 @@ const App = () => {
     {
       id: "M11",
       message:
-        "Parece ser que sientes agotamiento laboral. Esto puede deberse a la carga de trabajo, la monotonía de las tareas o, el desequilibrio entre la vida personal y el trabajo.",
+        "Parece ser que estás viviendo agotamiento laboral. Esto puede deberse a la carga de trabajo, la monotonía de las tareas o, el desequilibrio entre la vida personal y el trabajo.",
       trigger: "M11a",
     },
     {
@@ -1221,7 +1286,7 @@ const App = () => {
     {
       id: "M12",
       message:
-        "Parece ser que has perdido la emoción por tu trabajo en el último año. Esto puede mejorar con el establecimeinto de nuevas metas y proyectos en conjunto con tu equipo de trabajo.",
+        "Parece que ya tu compromiso hacia el trabajo ha disminuido. Esto puede mejorar con el establecimiento de nuevos proyectos y estimulos laborales.",
       trigger: "M12a",
     },
     {
@@ -1231,7 +1296,13 @@ const App = () => {
     {
       id: "M13",
       message:
-        "Tu percepción de desempeño y expectativas en el trabajo está muy baja. Esto no necesariamente refleja tu rendimiento, sin embargo, puede afectarlo si no lo abordas con tu supevisor o jefe.",
+        "Tu percepción de tu eficacia profesional es muy baja. Puedes abordarlo mediante la fragmentación de los proyectos en metas más cortas.",
+      trigger: "M13a",
+    },
+    {
+      id: "M14",
+      message:
+        "¡Tu percepción de tu eficacia profesional y productividad es buena! Si deseas mejorarla, establece metas a corto plazo dentro de proyectos a mediano plazo.",
       trigger: "M13a",
     },
     {
@@ -1240,17 +1311,30 @@ const App = () => {
     },
     {
       id: "8",
-      message: "Muchas gracias!",
+      component: (
+        <FinishComponent
+          background={"#32adc4"}
+          logo={"https://calcs-app.s3.amazonaws.com/resources/bot_chatbot.png"}
+        />
+      ),
       end: true,
     },
   ];
 
-  const handleEnd = ({ renderedSteps, steps, values }) => {};
+  const handleEnd = ({ steps }) => {
+    const { name, business, department } = steps;
+    result = {
+      ...result,
+      name: name.value,
+      business: business.value,
+      department: department.value,
+    };
+    console.log(result);
+  };
 
   // theming
   const theme = {
     background: "#f5f8fb",
-    fontFamily: "Helvetica Neue",
     headerBgColor: "#143540",
     headerFontColor: "#fff",
     headerFontSize: "15px",
@@ -1265,8 +1349,11 @@ const App = () => {
     headerTitle: "ChatBot",
     handleEnd: handleEnd,
     steps: steps,
-    botAvatar:
-      "https://calcs-app.s3.amazonaws.com/resources/salaunoReference.png",
+    placeholder: "Escriba su mensaje",
+    botAvatar: "https://calcs-app.s3.amazonaws.com/resources/bot_chatbot.png",
+    customStyle: {
+      padding: 0,
+    },
   };
 
   return (

@@ -3,8 +3,11 @@
 Dockerfile
 .dockerignore
 .gitignore
+.netlify
+.github
 README.md
 
 # Artifacts that will be built during image creation.
 # This should contain all files created during `npm run build`.
 build
+cdk
