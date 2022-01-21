@@ -73,4 +73,4 @@ jobs:
 
       - name: Deploy the stack
         working-directory: ./cdk
-        run: cdk deploy
+        run: cdk deploy --require-approval never
