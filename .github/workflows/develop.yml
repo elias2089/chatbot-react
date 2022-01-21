@@ -31,12 +31,12 @@ jobs:
   #         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
   #         IMAGE_TAG: latest
   #       run: |
-  #         # Build a docker container and push it to ECR 
+  #         # Build a docker container and push it to ECR
   #         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
   #         echo "Pushing image to ECR..."
   #         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
   #         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
- deploy:
+  deploy:
     name: CD
     runs-on: ubuntu-latest
 
@@ -64,10 +64,13 @@ jobs:
           aws-region: us-east-1
 
       - name: Bootstrap and Synth the stack
-        run: cdk bootstrap 
+        working-directory: ./cdk
+        run: cdk bootstrap
 
       - name: Synth the stack
-        run: cdk synth 
+        working-directory: ./cdk
+        run: cdk synth
 
       - name: Deploy the stack
+        working-directory: ./cdk
         run: cdk deploy
