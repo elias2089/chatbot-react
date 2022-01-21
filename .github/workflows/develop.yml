@@ -52,7 +52,6 @@ jobs:
       - name: Install dependencies
         working-directory: ./cdk
         run: npm install
-        run: npm i -g aws-cdk
 
       - name: Install CDK
         run: npm i -g aws-cdk
