@@ -79,16 +79,20 @@ const App = () => {
     result = { ...result, [key]: value };
   };
 
-  const calcGAD2 = (steps, value) => {
-    // No es GAD2_1s si no GAD2_1a
+  // Condicionales de GAD
+
+  const calcGAD2 = (props) => {
+    const { steps, value } = props;
     const { GAD2_1a } = steps;
     const GAD2 = GAD2_1a.value + value;
     updateResult("GAD2", GAD2);
     if (GAD2 >= 3) return "M2";
+    updateResult("byPassGAD7", true);
     return "M1";
   };
 
-  const calcGAD7int1 = (steps, value) => {
+  const calcGAD7int1 = (props) => {
+    const { steps, value } = props;
     const { GAD2_1a, GAD2_2a, GAD7_3a, GAD7_4a } = steps;
     const GAD7 =
       GAD2_1a.value + GAD2_2a.value + GAD7_3a.value + GAD7_4a.value + value;
@@ -97,7 +101,8 @@ const App = () => {
     return "GAD7_6q";
   };
 
-  const calcGAD7int2 = (steps, value) => {
+  const calcGAD7int2 = (props) => {
+    const { steps, value } = props;
     const { GAD2_1a, GAD2_2a, GAD7_3a, GAD7_4a, GAD7_5a } = steps;
     const GAD7 =
       GAD2_1a.value +
@@ -111,7 +116,8 @@ const App = () => {
     return "GAD7_7q";
   };
 
-  const calcGAD7 = (steps, value) => {
+  const calcGAD7 = (props) => {
+    const { steps, value } = props;
     const { GAD2_1a, GAD2_2a, GAD7_3a, GAD7_4a, GAD7_5a, GAD7_6a } = steps;
     const GAD7 =
       GAD2_1a.value +
@@ -129,30 +135,29 @@ const App = () => {
 
   // Condicionales de PHQ
 
-  const calcPHQ2 = (steps, value) => {
+  const calcPHQ2 = (props) => {
+    const { steps, value } = props;
     const { PHQ2_1a } = steps;
     const PHQ2 = PHQ2_1a.value + value;
     updateResult("PHQ2", PHQ2);
     if (PHQ2 >= 3) return "M7";
+    updateResult("byPassPHQ9", true);
     return "M6";
   };
 
-  const calcPHQ9int1 = (steps, value) => {
-    const { PHQ2_1a, PHQ2_2a, PHQ9_3a, PHQ9_4a, PHQ9_5a, PHQ9_6a } = steps;
-    const PHQ9 =
-      PHQ2_1a.value +
-      PHQ2_2a.value +
-      PHQ9_3a.value +
-      PHQ9_4a.value +
-      PHQ9_5a.value +
-      PHQ9_6a.value +
-      value;
+  const calcPHQ9int1 = (props) => {
+    const { steps, value } = props;
+    const { PHQ2_1a, PHQ2_2a, PHQ9_3a, PHQ9_4a, PHQ9_6a } = steps;
+    let PHQ9 =
+      PHQ2_1a.value + PHQ2_2a.value + PHQ9_3a.value + PHQ9_4a.value + value;
+    if (PHQ9_6a) PHQ9 = PHQ9 + PHQ9_6a.value;
     updateResult("PHQ9", PHQ9);
     if (PHQ9 >= 20) return "M8";
-    return "Phq9_8q";
+    return "PHQ9_8q";
   };
 
-  const calcPHQ9int2 = (steps, value) => {
+  const calcPHQ9int2 = (props) => {
+    const { steps, value } = props;
     const {
       PHQ2_1a,
       PHQ2_2a,
@@ -162,21 +167,22 @@ const App = () => {
       PHQ9_6a,
       PHQ9_7a,
     } = steps;
-    const PHQ9 =
+    let PHQ9 =
       PHQ2_1a.value +
       PHQ2_2a.value +
       PHQ9_3a.value +
       PHQ9_4a.value +
       PHQ9_5a.value +
-      PHQ9_6a.value +
-      PHQ9_7a.value +
       value;
+    if (PHQ9_6a) PHQ9 = PHQ9 + PHQ9_6a.value;
+    if (PHQ9_7a) PHQ9 = PHQ9 + PHQ9_7a.value;
     updateResult("PHQ9", PHQ9);
     if (PHQ9 >= 20) return "M8";
-    return "Phq9_9q";
+    return "PHQ9_9q";
   };
 
-  const calcPHQ9 = (steps, value) => {
+  const calcPHQ9 = (props) => {
+    const { steps, value } = props;
     const {
       PHQ2_1a,
       PHQ2_2a,
@@ -187,16 +193,16 @@ const App = () => {
       PHQ9_7a,
       PHQ9_8a,
     } = steps;
-    const PHQ9 =
+    let PHQ9 =
       PHQ2_1a.value +
       PHQ2_2a.value +
       PHQ9_3a.value +
       PHQ9_4a.value +
       PHQ9_5a.value +
-      PHQ9_6a.value +
-      PHQ9_7a.value +
       PHQ9_8a.value +
       value;
+    if (PHQ9_6a) PHQ9 = PHQ9 + PHQ9_6a.value;
+    if (PHQ9_7a) PHQ9 = PHQ9 + PHQ9_7a.value;
     updateResult("PHQ9", PHQ9);
     if (PHQ9 >= 15) return "M8";
     if (PHQ9 <= 14 && PHQ9 >= 5) return "M9";
@@ -205,7 +211,8 @@ const App = () => {
 
   // Condicionales de MBIGS
 
-  const calcMBIGS_A = (steps, value) => {
+  const calcMBIGS_A = (props) => {
+    const { steps, value } = props;
     const { MBIGS_A1a, MBIGS_A2a, MBIGS_A3a, MBIGS_A4a } = steps;
     const MBIGS_A =
       MBIGS_A1a.value +
@@ -218,7 +225,8 @@ const App = () => {
     return "MBIGS_E2q";
   };
 
-  const calcMBIGS_C = (steps, value) => {
+  const calcMBIGS_C = (props) => {
+    const { steps, value } = props;
     const { MBIGS_C1a, MBIGS_C2a, MBIGS_C3a } = steps;
     const MBIGS_C = MBIGS_C1a.value + MBIGS_C2a.value + MBIGS_C3a.value + value;
     updateResult("MBIGS_C", MBIGS_C);
@@ -226,7 +234,8 @@ const App = () => {
     return "MBIGS_E6q";
   };
 
-  const calcMBIGS_E = (steps, value) => {
+  const calcMBIGS_E = (props) => {
+    const { steps, value } = props;
     const { MBIGS_E1a, MBIGS_E2a, MBIGS_E3a, MBIGS_E4a, MBIGS_E5a } = steps;
     const MBIGS_E =
       MBIGS_E1a.value +
@@ -251,7 +260,8 @@ const App = () => {
       user: true,
       validator: (value) => {
         const pattern = /^[A-Za-z]+$/;
-        if (!pattern.test(value)) {
+        if (!value) return "Debe insertar un valor";
+        else if (!pattern.test(value)) {
           return "Solo se permiten letras";
         }
         return true;
@@ -266,6 +276,10 @@ const App = () => {
     {
       id: "business",
       user: true,
+      validator: (value) => {
+        if (!value) return "Debe insertar un valor";
+        return true;
+      },
       trigger: "department_q",
     },
     {
@@ -276,6 +290,10 @@ const App = () => {
     {
       id: "department",
       user: true,
+      validator: (value) => {
+        if (!value) return "Debe insertar un valor";
+        return true;
+      },
       trigger: "saludo",
     },
     {
@@ -318,22 +336,22 @@ const App = () => {
         {
           value: 0,
           label: "Nunca",
-          trigger: ({ steps }) => calcGAD2(steps, 0),
+          trigger: (props) => calcGAD2(props),
         },
         {
           value: 1,
           label: "Varios días",
-          trigger: ({ steps }) => calcGAD2(steps, 1),
+          trigger: (props) => calcGAD2(props),
         },
         {
           value: 2,
           label: "Más de la mitad de los días",
-          trigger: ({ steps }) => calcGAD2(steps, 2),
+          trigger: (props) => calcGAD2(props),
         },
         {
           value: 3,
           label: "Casi todos los días",
-          trigger: ({ steps }) => calcGAD2(steps, 3),
+          trigger: (props) => calcGAD2(props),
         },
       ],
     },
@@ -355,7 +373,10 @@ const App = () => {
         {
           value: 0,
           label: "No, pasemos a la siguiente sección.",
-          trigger: "M2_b",
+          trigger: () => {
+            updateResult("byPassGAD7", true);
+            return "M2_b";
+          },
         },
         {
           value: 1,
@@ -415,7 +436,7 @@ const App = () => {
         {
           value: 3,
           label: "Casi todos los días",
-          trigger: ({ steps }) => calcGAD7int1(steps, 3),
+          trigger: (props) => calcGAD7int1(props),
         },
       ],
     },
@@ -434,7 +455,7 @@ const App = () => {
         {
           value: 3,
           label: "Casi todos los días",
-          trigger: ({ steps }) => calcGAD7int2(steps, 3),
+          trigger: (props) => calcGAD7int2(props),
         },
       ],
     },
@@ -450,22 +471,22 @@ const App = () => {
         {
           value: 0,
           label: "Nunca",
-          trigger: ({ steps }) => calcGAD7(steps, 0),
+          trigger: (props) => calcGAD7(props),
         },
         {
           value: 1,
           label: "Varios días",
-          trigger: ({ steps }) => calcGAD7(steps, 1),
+          trigger: (props) => calcGAD7(props),
         },
         {
           value: 2,
           label: "Más de la mitad de los días",
-          trigger: ({ steps }) => calcGAD7(steps, 2),
+          trigger: (props) => calcGAD7(props),
         },
         {
           value: 3,
           label: "Casi todos los días",
-          trigger: ({ steps }) => calcGAD7(steps, 3),
+          trigger: (props) => calcGAD7(props),
         },
       ],
     },
@@ -531,22 +552,22 @@ const App = () => {
         {
           value: 0,
           label: "Nunca",
-          trigger: ({ steps }) => calcPHQ2(steps, 0),
+          trigger: (props) => calcPHQ2(props),
         },
         {
           value: 1,
           label: "Varios días",
-          trigger: ({ steps }) => calcPHQ2(steps, 1),
+          trigger: (props) => calcPHQ2(props),
         },
         {
           value: 2,
           label: "Más de la mitad de los días",
-          trigger: ({ steps }) => calcPHQ2(steps, 2),
+          trigger: (props) => calcPHQ2(props),
         },
         {
           value: 3,
           label: "Casi todos los días",
-          trigger: ({ steps }) => calcPHQ2(steps, 3),
+          trigger: (props) => calcPHQ2(props),
         },
       ],
     },
@@ -568,7 +589,10 @@ const App = () => {
         {
           value: 0,
           label: "No, pasemos a la última sección.",
-          trigger: "M10a",
+          trigger: () => {
+            updateResult("byPassPHQ9", true);
+            return "M10a";
+          },
         },
         {
           value: 1,
@@ -610,7 +634,7 @@ const App = () => {
     {
       id: "PHQ9_5q",
       message: "¿Te has sentido sin apetito o has comido en exceso?",
-      trigger: "GAD7_5a",
+      trigger: "PHQ9_5a",
     },
     {
       id: "PHQ9_5a",
@@ -621,7 +645,7 @@ const App = () => {
         {
           value: 3,
           label: "Casi todos los días",
-          trigger: ({ steps }) => calcPHQ9int1(steps, 3),
+          trigger: (props) => calcPHQ9int1(props),
         },
       ],
     },
@@ -655,7 +679,7 @@ const App = () => {
         {
           value: 3,
           label: "Casi todos los días",
-          trigger: ({ steps }) => calcPHQ9int1(steps, 3),
+          trigger: (props) => calcPHQ9int1(props),
         },
       ],
     },
@@ -674,7 +698,7 @@ const App = () => {
         {
           value: 3,
           label: "Casi todos los días",
-          trigger: ({ steps }) => calcPHQ9int2(steps, 3),
+          trigger: (props) => calcPHQ9int2(props),
         },
       ],
     },
@@ -690,22 +714,22 @@ const App = () => {
         {
           value: 0,
           label: "Nunca",
-          trigger: ({ steps }) => calcPHQ9(steps, 0),
+          trigger: (props) => calcPHQ9(props),
         },
         {
           value: 1,
           label: "Varios días",
-          trigger: ({ steps }) => calcPHQ9(steps, 1),
+          trigger: (props) => calcPHQ9(props),
         },
         {
           value: 2,
           label: "Más de la mitad de los días",
-          trigger: ({ steps }) => calcPHQ9(steps, 2),
+          trigger: (props) => calcPHQ9(props),
         },
         {
           value: 3,
           label: "Casi todos los días",
-          trigger: ({ steps }) => calcPHQ9(steps, 3),
+          trigger: (props) => calcPHQ9(props),
         },
       ],
     },
@@ -943,37 +967,37 @@ const App = () => {
         {
           value: 0,
           label: "Nunca",
-          trigger: ({ steps }) => calcMBIGS_A(steps, 0),
+          trigger: (props) => calcMBIGS_A(props),
         },
         {
           value: 1,
           label: "Muy raras veces",
-          trigger: ({ steps }) => calcMBIGS_A(steps, 1),
+          trigger: (props) => calcMBIGS_A(props),
         },
         {
           value: 2,
           label: "En algunas ocasiones en el año",
-          trigger: ({ steps }) => calcMBIGS_A(steps, 2),
+          trigger: (props) => calcMBIGS_A(props),
         },
         {
           value: 3,
           label: "En bastantes ocasiones en el año",
-          trigger: ({ steps }) => calcMBIGS_A(steps, 3),
+          trigger: (props) => calcMBIGS_A(props),
         },
         {
           value: 4,
           label: "Frecuentemente a lo largo del año",
-          trigger: ({ steps }) => calcMBIGS_A(steps, 4),
+          trigger: (props) => calcMBIGS_A(props),
         },
         {
           value: 5,
           label: "Casi todos los días",
-          trigger: ({ steps }) => calcMBIGS_A(steps, 5),
+          trigger: (props) => calcMBIGS_A(props),
         },
         {
           value: 6,
           label: "Todos los días",
-          trigger: ({ steps }) => calcMBIGS_A(steps, 6),
+          trigger: (props) => calcMBIGS_A(props),
         },
       ],
     },
@@ -1193,37 +1217,37 @@ const App = () => {
         {
           value: 0,
           label: "Nunca",
-          trigger: ({ steps }) => calcMBIGS_C(steps, 0),
+          trigger: (props) => calcMBIGS_C(props),
         },
         {
           value: 1,
           label: "Muy raras veces",
-          trigger: ({ steps }) => calcMBIGS_C(steps, 1),
+          trigger: (props) => calcMBIGS_C(props),
         },
         {
           value: 2,
           label: "En algunas ocasiones en el año",
-          trigger: ({ steps }) => calcMBIGS_C(steps, 2),
+          trigger: (props) => calcMBIGS_C(props),
         },
         {
           value: 3,
           label: "En bastantes ocasiones en el año",
-          trigger: ({ steps }) => calcMBIGS_C(steps, 3),
+          trigger: (props) => calcMBIGS_C(props),
         },
         {
           value: 4,
           label: "Frecuentemente a lo largo del año",
-          trigger: ({ steps }) => calcMBIGS_C(steps, 4),
+          trigger: (props) => calcMBIGS_C(props),
         },
         {
           value: 5,
           label: "Casi todos los días",
-          trigger: ({ steps }) => calcMBIGS_C(steps, 5),
+          trigger: (props) => calcMBIGS_C(props),
         },
         {
           value: 6,
           label: "Todos los días",
-          trigger: ({ steps }) => calcMBIGS_C(steps, 6),
+          trigger: (props) => calcMBIGS_C(props),
         },
       ],
     },
@@ -1239,37 +1263,37 @@ const App = () => {
         {
           value: 0,
           label: "Nunca",
-          trigger: ({ steps }) => calcMBIGS_E(steps, 0),
+          trigger: (props) => calcMBIGS_E(props),
         },
         {
           value: 1,
           label: "Muy raras veces",
-          trigger: ({ steps }) => calcMBIGS_E(steps, 1),
+          trigger: (props) => calcMBIGS_E(props),
         },
         {
           value: 2,
           label: "En algunas ocasiones en el año",
-          trigger: ({ steps }) => calcMBIGS_E(steps, 2),
+          trigger: (props) => calcMBIGS_E(props),
         },
         {
           value: 3,
           label: "En bastantes ocasiones en el año",
-          trigger: ({ steps }) => calcMBIGS_E(steps, 3),
+          trigger: (props) => calcMBIGS_E(props),
         },
         {
           value: 4,
           label: "Frecuentemente a lo largo del año",
-          trigger: ({ steps }) => calcMBIGS_E(steps, 4),
+          trigger: (props) => calcMBIGS_E(props),
         },
         {
           value: 5,
           label: "Casi todos los días",
-          trigger: ({ steps }) => calcMBIGS_E(steps, 5),
+          trigger: (props) => calcMBIGS_E(props),
         },
         {
           value: 6,
           label: "Todos los días",
-          trigger: ({ steps }) => calcMBIGS_E(steps, 6),
+          trigger: (props) => calcMBIGS_E(props),
         },
       ],
     },
